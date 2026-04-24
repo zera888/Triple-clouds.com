@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OneClickDR — Shock Demo (Stock Spike)</title>
+  <meta name="description" content="OneClickDR Shock Demo：即時看見 AI 產線成本與異常，並一鍵啟動 Guard 控制風險擴散。" />
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#0f1626;
+      --panel2:#0d1422;
+      --border:#1c2333;
+      --text:#e6e9f2;
+      --muted:#8b93a7;
+      --good:#3ddc97;
+      --warn:#ffd166;
+      --bad:#ff5a5a;
+      --accent:#7aa2ff;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --radius2:14px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:
+        radial-gradient(1100px 700px at 12% 10%, rgba(122,162,255,.22), transparent 60%),
+        radial-gradient(900px 600px at 90% 30%, rgba(61,220,151,.12), transparent 55%),
+        radial-gradient(800px 500px at 45% 110%, rgba(255,90,90,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{max-width:1200px; margin:0 auto; padding:28px 18px 40px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; margin-bottom:20px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:700; letter-spacing:.2px;
+    }
+    .logo{
+      width:34px; height:34px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(122,162,255,1), rgba(61,220,151,1));
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+    .subtitle{color:var(--muted); font-weight:600; font-size:12px}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-weight:700;
+      cursor:pointer;
+      transition: .18s ease;
+      display:inline-flex; align-items:center; gap:8px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(122,162,255,.45)}
+    .btn:active{transform: translateY(0px); opacity:.95}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(122,162,255,.18), rgba(61,220,151,.08));
+      border-color: rgba(122,162,255,.45);
+    }
+    .btn.danger{
+      background: rgba(255,90,90,.08);
+      border-color: rgba(255,90,90,.45);
+    }
+    .btn:disabled{
+      opacity:.45; cursor:not-allowed; transform:none;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns: 1fr}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHeader{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      padding:16px 16px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      gap:10px;
+    }
+    .hTitle{
+      font-size:18px; font-weight:800; margin:0;
+    }
+    .hMeta{
+      color:var(--muted); font-size:12px; margin-top:4px;
+    }
+    .pill{
+      padding:7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      font-weight:800;
+      font-size:12px;
+      letter-spacing:.2px;
+      display:inline-flex; align-items:center; gap:8px;
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+    .pill.good{border-color: rgba(61,220,151,.4); background: rgba(61,220,151,.08)}
+    .pill.warn{border-color: rgba(255,209,102,.35); background: rgba(255,209,102,.08)}
+    .pill.bad{border-color: rgba(255,90,90,.40); background: rgba(255,90,90,.08)}
+    .content{padding:14px 16px 16px}
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+      margin:8px 0 14px;
+    }
+    @media (max-width: 520px){
+      .kpis{grid-template-columns: 1fr}
+    }
+    .kpi{
+      padding:12px 12px 10px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+    }
+    .kLabel{
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .kValue{
+      margin-top:8px;
+      font-size:22px;
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .kSub{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+    }
+    .kValue.low{color:var(--good)}
+    .kValue.med{color:var(--warn)}
+    .kValue.high{color:var(--bad)}
+
+    .chartWrap{
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.06);
+      background: radial-gradient(500px 240px at 30% 20%, rgba(122,162,255,.12), transparent 55%), rgba(0,0,0,.20);
+      padding:10px;
+      overflow:hidden;
+    }
+    .chartLegend{
+      display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;
+      gap:10px; margin: 2px 2px 10px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:800;
+    }
+    .legendLeft{display:flex; align-items:center; gap:10px}
+    .dot{width:10px; height:10px; border-radius: 999px; display:inline-block}
+    .dot.price{background:rgba(122,162,255,.95)}
+    .dot.base{background:rgba(255,255,255,.35)}
+    .dot.danger{background:rgba(255,90,90,.85)}
+    .note{color:var(--muted); font-size:12px; line-height:1.45}
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    @media (max-width: 680px){
+      .split{grid-template-columns:1fr}
+    }
+    .panel{
+      padding:12px;
+      border-radius: var(--radius2);
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.20);
+      min-height: 114px;
+    }
+    .panel h3{
+      margin:0 0 6px;
+      font-size:12px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .mono{
+      font-family:var(--mono);
+      font-size:12px;
+      line-height:1.5;
+      color:#dfe3ee;
+      white-space:pre-wrap;
+    }
+    .hr{height:1px; background: rgba(255,255,255,.06); margin:14px 0}
+    .side{
+      display:flex; flex-direction:column; gap:16px;
+    }
+    .hero{
+      padding:16px;
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.06);
+      background:
+        radial-gradient(500px 250px at 12% 0%, rgba(61,220,151,.13), transparent 60%),
+        radial-gradient(600px 280px at 90% 0%, rgba(122,162,255,.14), transparent 60%),
+        rgba(0,0,0,.20);
+    }
+    .hero h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:.2px;
+      font-weight:900;
+    }
+    .hero p{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-weight:650;
+      line-height:1.55;
+      font-size:13px;
+    }
+    .steps{
+      margin-top:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .step{
+      border:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+      border-radius: var(--radius2);
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start;
+    }
+    .badge{
+      width:28px; height:28px;
+      border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+      background: rgba(122,162,255,.18);
+      border:1px solid rgba(122,162,255,.35);
+      flex:0 0 auto;
+    }
+    .step strong{display:block; margin-bottom:4px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45; font-weight:650}
+    .foot{
+      margin-top:16px;
+      color:rgba(230,233,242,.55);
+      font-size:12px;
+      text-align:center;
+    }
+    .kbd{
+      font-family:var(--mono);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:2px 6px;
+      border-radius: 8px;
+      font-size:12px;
+      color:#e8ebf5;
+      display:inline-block;
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="display:flex; align-items:baseline; gap:10px;">
+            <div style="font-size:14px">OneClickDR</div>
+            <div class="subtitle">Shock Demo • Stock Spike</div>
+          </div>
+          <div class="subtitle" id="statusLine">Status: Normal (S0)</div>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="pill" id="guardPill">Guard: OFF</div>
+        <button type="button" class="btn primary" id="btnPlayTop">Play 30s Incident</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Main -->
+      <div class="card">
+        <div class="cardHeader">
+          <div>
+            <p class="hTitle">Live Risk & Cost Monitor</p>
+            <div class="hMeta">See a cost spike emerge, then contain it with one click.</div>
+          </div>
+          <div class="pill" id="tagText">Baseline: $0.15</div>
+        </div>
+        <div class="content">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="kLabel">
+                <span>Risk score</span>
+                <span class="kbd">S0–S2</span>
+              </div>
+              <div class="kValue low" id="riskValue">38 LOW</div>
+              <div class="kSub" id="riskDelta">—</div>
+            </div>
+            <div class="kpi">
+              <div class="kLabel"><span>Today cost</span><span class="kbd">USD</span></div>
+              <div class="kValue" id="todayCost">$3.24</div>
+              <div class="kSub" id="todayCostDelta">stable</div>
+            </div>
+            <div class="kpi">
+              <div class="kLabel"><span>Detected anomalies</span><span class="kbd">count</span></div>
+              <div class="kValue" id="anomCount">0</div>
+              <div class="kSub" id="anomDelta">none</div>
+            </div>
+          </div>
+
+          <div class="chartWrap">
+            <div class="chartLegend">
+              <div class="legendLeft">
+                <span class="dot price"></span> Price
+                <span class="dot base"></span> Baseline
+                <span class="dot danger"></span> Danger
+              </div>
+              <div>30 seconds window • 10 points</div>
+            </div>
+
+            <!-- SVG chart -->
+            <svg id="chart" viewBox="0 0 640 220" width="100%" height="220" role="img" aria-label="Price chart">
+              <defs>
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3.2" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+                <linearGradient id="dangerGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(255,90,90,.35)"/>
+                  <stop offset="100%" stop-color="rgba(255,90,90,0)"/>
+                </linearGradient>
+              </defs>
+
+              <!-- grid -->
+              <g opacity="0.45" stroke="rgba(255,255,255,.07)">
+                <line x1="50" y1="30" x2="620" y2="30"/>
+                <line x1="50" y1="80" x2="620" y2="80"/>
+                <line x1="50" y1="130" x2="620" y2="130"/>
+                <line x1="50" y1="180" x2="620" y2="180"/>
+              </g>
+
+              <!-- baseline -->
+              <line id="baselineLine" x1="50" y1="130" x2="620" y2="130" stroke="rgba(255,255,255,.28)" stroke-dasharray="6 6"/>
+
+              <!-- danger fill -->
+              <path id="dangerFill" d="" fill="url(#dangerGrad)" opacity="0.9"></path>
+
+              <!-- price line -->
+              <path id="priceLine" d="" fill="none" stroke="rgba(122,162,255,.95)" stroke-width="3" filter="url(#glow)"></path>
+
+              <!-- spike glow + dot -->
+              <circle id="spikeGlow" cx="0" cy="0" r="12" fill="rgba(255,90,90,.35)" filter="url(#glow)" opacity="0"></circle>
+              <circle id="spikeDot" cx="0" cy="0" r="5.5" fill="rgba(255,90,90,.95)" opacity="0"></circle>
+
+              <!-- axis labels -->
+              <g fill="rgba(230,233,242,.55)" font-family="ui-monospace, monospace" font-size="12">
+                <text x="50" y="206">0s</text>
+                <text x="600" y="206">30s</text>
+                <text x="12" y="35">$</text>
+              </g>
+            </svg>
+
+            <div class="note">
+              Tip: click <span class="kbd">Play</span> to simulate a 30s incident. Then press <span class="kbd">Apply Cost Limit</span> to contain.
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <button type="button" class="btn primary" id="btnLimit">🛡 Apply Cost Limit</button>
+            <button type="button" class="btn" id="btnReset">↻ Reset</button>
+            <button type="button" class="btn" id="btnPlay">▶ Replay</button>
+          </div>
+
+          <div class="split">
+            <div class="panel">
+              <h3>Agent (Before)</h3>
+              <div class="mono" id="msgLeft"></div>
+            </div>
+            <div class="panel">
+              <h3>Guard (After)</h3>
+              <div class="mono" id="msgRight"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Side -->
+      <div class="side">
+        <div class="hero">
+          <h1>One click to stop cost blow-ups.</h1>
+          <p>
+            This demo shows how a sudden <strong>retry loop</strong> and <strong>model upgrade</strong> can spike usage.
+            OneClickDR detects it in minutes and applies a <strong>cost limit</strong> to prevent further damage.
+          </p>
+          <div class="steps">
+            <div class="step">
+              <div class="badge">1</div>
+              <div>
+                <strong>Normal (S0)</strong>
+                <div class="small">Stable usage • no anomalies • baseline line holds.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="badge" style="background:rgba(255,90,90,.12); border-color:rgba(255,90,90,.35)">2</div>
+              <div>
+                <strong>Incident (S1)</strong>
+                <div class="small">Cost spikes + retries • risk rises • recommend guard.</div>
+              </div>
+            </div>
+            <div class="step">
+              <div class="badge" style="background:rgba(61,220,151,.12); border-color:rgba(61,220,151,.35)">3</div>
+              <div>
+                <strong>Controlled (S2)</strong>
+                <div class="small">Guard active • spend capped • risk trends down.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px; flex-wrap:wrap">
+            <div class="small">Want a guided walkthrough for your use case?</div>
+            <button type="button" class="btn primary" id="btnRequest">Request Demo</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div>
+              <p class="hTitle">What you get</p>
+              <div class="hMeta">Minimum feature set for real deployments.</div>
+            </div>
+            <div class="pill">MVP-ready</div>
+          </div>
+          <div class="content">
+            <div class="small" style="line-height:1.6">
+              • Real-time anomaly detection (spend / retries / latency)<br/>
+              • One-click guardrails (limits, routing, blocklists)<br/>
+              • Audit trail & alerts<br/>
+              • Multi-tenant dashboards
+            </div>
+          </div>
+        </div>
+
+        <div class="foot">© OneClickDR • Demo UI (static)</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------
+    // State + KPI helpers
+    // -----------------------
+    const els = {
+      statusLine: document.getElementById('statusLine'),
+      guardPill: document.getElementById('guardPill'),
+      riskValue: document.getElementById('riskValue'),
+      riskDelta: document.getElementById('riskDelta'),
+      todayCost: document.getElementById('todayCost'),
+      todayCostDelta: document.getElementById('todayCostDelta'),
+      anomCount: document.getElementById('anomCount'),
+      anomDelta: document.getElementById('anomDelta'),
+      tagText: document.getElementById('tagText'),
+      msgLeft: document.getElementById('msgLeft'),
+      msgRight: document.getElementById('msgRight'),
+      btnLimit: document.getElementById('btnLimit'),
+      btnReset: document.getElementById('btnReset'),
+      btnPlay: document.getElementById('btnPlay'),
+      btnPlayTop: document.getElementById('btnPlayTop'),
+      btnRequest: document.getElementById('btnRequest'),
+
+      baselineLine: document.getElementById('baselineLine'),
+      dangerFill: document.getElementById('dangerFill'),
+      priceLine: document.getElementById('priceLine'),
+      spikeGlow: document.getElementById('spikeGlow'),
+      spikeDot: document.getElementById('spikeDot'),
+    };
+
+    const SERIES_NORMAL = [0.11,0.12,0.12,0.13,0.12,0.12,0.13,0.12,0.11,0.12];
+    const SERIES_INCIDENT = [0.12,0.13,0.12,0.14,0.16,0.20,0.26,0.32,0.41,0.36];
+    const SERIES_CONTROLLED = [0.12,0.13,0.12,0.14,0.16,0.20,0.24,0.22,0.20,0.19];
+
+    const BASELINE = 0.15;
+    const timers = new Set();
+
+    function later(ms, fn){
+      const t = setTimeout(fn, ms);
+      timers.add(t);
+      return t;
+    }
+    function clearTimers(){
+      for(const t of timers) clearTimeout(t);
+      timers.clear();
+    }
+
+    function setGuard(on){
+      if(on){
+        els.guardPill.textContent = 'Guard: ON';
+        els.guardPill.className = 'pill good';
+      }else{
+        els.guardPill.textContent = 'Guard: OFF';
+        els.guardPill.className = 'pill';
+      }
+    }
+    function setRisk(level, score, delta){
+      els.riskValue.classList.remove('low','med','high');
+      els.riskValue.classList.add(level);
+      els.riskValue.textContent = `${score} ${level.toUpperCase()}`;
+      els.riskDelta.textContent = delta || '—';
+    }
+
+    // -----------------------
+    // Chart render
+    // -----------------------
+    function renderChart(series, {showSpike=false, showDanger=false} = {}){
+      const W = 640, H = 220;
+      const left = 50, right = 620, top = 30, bottom = 180;
+      const innerW = right-left;
+      const innerH = bottom-top;
+      const min = Math.min(...series, BASELINE) - 0.03;
+      const max = Math.max(...series, BASELINE) + 0.05;
+
+      function x(i){
+        const t = i/(series.length-1);
+        return left + t*innerW;
+      }
+      function y(v){
+        const t = (v-min)/(max-min);
+        return bottom - t*innerH;
+      }
+
+      // baseline line y
+      const by = y(BASELINE);
+      els.baselineLine.setAttribute('y1', by);
+      els.baselineLine.setAttribute('y2', by);
+
+      // line path
+      let d = '';
+      series.forEach((v,i)=>{
+        const px = x(i), py = y(v);
+        d += (i===0 ? `M ${px} ${py}` : ` L ${px} ${py}`);
+      });
+      els.priceLine.setAttribute('d', d);
+
+      // danger fill (area above baseline)
+      if(showDanger){
+        const above = series
+          .map((v,i)=>({v,i,px:x(i),py:y(v)}))
+          .filter(p=>p.v>BASELINE);
+
+        if(above.length>0){
+          const first = above[0];
+          const last = above[above.length-1];
+          let area = `M ${first.px} ${by}`;
+          for(let i=first.i; i<=last.i; i++){
+            area += ` L ${x(i)} ${y(series[i])}`;
+          }
+          area += ` L ${last.px} ${by} Z`;
+          els.dangerFill.setAttribute('d', area);
+          els.dangerFill.style.opacity = '0.95';
+        }else{
+          els.dangerFill.setAttribute('d','');
+          els.dangerFill.style.opacity = '0';
+        }
+      }else{
+        els.dangerFill.setAttribute('d','');
+        els.dangerFill.style.opacity = '0';
+      }
+
+      // spike marker
+      if(showSpike){
+        let maxI = 0;
+        for(let i=1;i<series.length;i++){
+          if(series[i]>series[maxI]) maxI=i;
+        }
+        const cx = x(maxI), cy = y(series[maxI]);
+        els.spikeGlow.setAttribute('cx', cx);
+        els.spikeGlow.setAttribute('cy', cy);
+        els.spikeDot.setAttribute('cx', cx);
+        els.spikeDot.setAttribute('cy', cy);
+        els.spikeGlow.style.opacity = '1';
+        els.spikeDot.style.opacity = '1';
+      }else{
+        els.spikeGlow.style.opacity = '0';
+        els.spikeDot.style.opacity = '0';
+      }
+    }
+
+    // -----------------------
+    // Scenarios
+    // -----------------------
+    function setNormal(){
+      clearTimers();
+      els.statusLine.textContent = 'Status: Normal (S0)';
+      setGuard(false);
+      setRisk('low', 38, '—');
+      els.todayCost.textContent = '$3.24';
+      els.todayCostDelta.textContent = 'stable';
+      els.anomCount.textContent = '0';
+      els.anomDelta.textContent = 'none';
+      els.tagText.textContent = 'Baseline: $0.15';
+      els.msgLeft.innerHTML = 'Status: <strong>Normal</strong>';
+      els.msgRight.textContent = '—';
+
+      els.btnLimit.disabled = false;
+
+      renderChart(SERIES_NORMAL, {showSpike:false, showDanger:false});
+    }
+
+    function setIncident(){
+      els.statusLine.textContent = 'Status: Incident (S1)';
+      setGuard(false);
+      setRisk('high', 74, '↑ +21 (last 10 min)');
+      els.todayCost.textContent = '$12.84';
+      els.todayCostDelta.textContent = 'spike +38%';
+      els.anomCount.textContent = '2';
+      els.anomDelta.textContent = 'spike + retries';
+      els.tagText.textContent = '⚠ Cost spike detected (+38% vs baseline)';
+      els.msgLeft.innerHTML = 'Status: <strong style="color:var(--bad)">Incident</strong>';
+      els.msgRight.textContent = 'Recommended: Apply Cost Limit';
+
+      renderChart(SERIES_INCIDENT, {showSpike:true, showDanger:true});
+    }
+
+    function setControlled(){
+      els.statusLine.textContent = 'Status: Controlled (S2)';
+      setGuard(true);
+      setRisk('med', 61, '↓ -13 (last 3 min)');
+      els.todayCost.textContent = '$13.02';
+      els.todayCostDelta.textContent = 'limited';
+      els.anomCount.textContent = '1';
+      els.anomDelta.textContent = 'guard active';
+      els.tagText.textContent = '🛡 Guard active • Incident contained';
+      els.msgLeft.innerHTML = 'Status: <strong style="color:var(--good)">Controlled</strong>';
+      els.msgRight.textContent = 'Before the damage spreads.';
+
+      els.btnLimit.disabled = true;
+
+      renderChart(SERIES_CONTROLLED, {showSpike:false, showDanger:true});
+    }
+
+    async function play(){
+      setNormal();
+      later(1200, setIncident);
+      later(5400, setControlled);
+    }
+
+    // -----------------------
+    // Google Form (prefill)
+    // -----------------------
+    // ✅ IMPORTANT:
+    // 1) Use the *public* viewform URL (NOT /edit)
+    // 2) Replace entry IDs below using Google Form "Get pre-filled link"
+    const FORM_BASE = 'https://docs.google.com/forms/d/e/XXXXXXXX/viewform';
+    const FORM_FIELDS = {
+      state: 'entry.1111111111',
+      risk:  'entry.2222222222',
+      cost:  'entry.3333333333',
+      ts:    'entry.4444444444',
+      // url: 'entry.5555555555', // optional
+    };
+
+    function getCurrentState(){
+      const s = (els.statusLine?.textContent || '').toLowerCase();
+      if (s.includes('(s0)')) return 'Normal (S0)';
+      if (s.includes('(s1)')) return 'Incident (S1)';
+      if (s.includes('(s2)')) return 'Controlled (S2)';
+      // Fallback: return raw text
+      return els.statusLine?.textContent || '';
+    }
+
+    function getRiskScore(){
+      // riskValue looks like: "74 HIGH"
+      const t = (els.riskValue?.textContent || '').trim();
+      const m = t.match(/(\d+(?:\.\d+)?)/);
+      return m ? m[1] : t;
+    }
+
+    function buildPrefillUrl(){
+      const u = new URL(FORM_BASE);
+      u.searchParams.set('usp','pp_url');
+      u.searchParams.set(FORM_FIELDS.state, getCurrentState());
+      u.searchParams.set(FORM_FIELDS.risk, String(getRiskScore() || ''));
+      u.searchParams.set(FORM_FIELDS.cost, String(els.todayCost?.textContent || ''));
+      u.searchParams.set(FORM_FIELDS.ts, new Date().toISOString());
+      // u.searchParams.set(FORM_FIELDS.url, window.location.href);
+      return u.toString();
+    }
+
+    // -----------------------
+    // Bindings
+    // -----------------------
+    els.btnPlayTop.addEventListener('click', play);
+    els.btnPlay.addEventListener('click', play);
+    els.btnLimit.addEventListener('click', setControlled);
+    els.btnReset.addEventListener('click', setNormal);
+
+    els.btnRequest.addEventListener('click', ()=>{
+      const link = buildPrefillUrl();
+      window.open(link, '_blank', 'noopener,noreferrer');
+    });
+
+    // init
+    setNormal();
+    // later(800, play); // 如不想自動播放，保持註解
+  </script>
+</body>
+</html>

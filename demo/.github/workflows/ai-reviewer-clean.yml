@@ -1,0 +1,220 @@
+name: AI Reviewer (Clean)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to review (required when manually running workflow_dispatch)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ai-review-${{ github.event.pull_request.number || github.event.inputs.pr_number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  ai_review:
+    runs-on: ubuntu-latest
+
+    # PR draft 時先不跑（你想要 draft 也跑，把這行刪掉即可）
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve PR number
+        id: pr
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PR_NUMBER=""
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+          else
+            PR_NUMBER="${{ github.event.inputs.pr_number }}"
+          fi
+
+          # workflow_dispatch 沒填 PR number 就不要炸，直接 graceful exit
+          if [[ -z "${PR_NUMBER}" ]]; then
+            echo "no_pr=true" >> "$GITHUB_OUTPUT"
+            echo "PR number not provided. Skipping."
+            exit 0
+          fi
+
+          echo "no_pr=false" >> "$GITHUB_OUTPUT"
+          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch PR diff (bounded)
+        if: steps.pr.outputs.no_pr != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Fetching diff for PR #${PR_NUMBER} in ${GITHUB_REPOSITORY}"
+
+          # 取 PR diff（v3 diff media type）
+          gh api \
+            -H "Accept: application/vnd.github.v3.diff" \
+            "/repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" > pr.diff
+
+          # 防止超大 diff 撐爆 token / 花錢：上限 80k 字元
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("pr.diff")
+          s = p.read_text(encoding="utf-8", errors="replace")
+          cap = 80000
+          if len(s) > cap:
+            s = s[:cap] + "\n\n---\n[TRUNCATED: diff was too large]\n"
+            p.write_text(s, encoding="utf-8")
+          print(f"pr.diff chars: {len(s)}")
+          PY
+
+      - name: Redact obvious secrets (basic)
+        if: steps.pr.outputs.no_pr != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+
+          s = Path("pr.diff").read_text(encoding="utf-8", errors="replace")
+
+          # 非完美，但先擋最常見「一貼就外洩」類型
+          patterns = [
+            r"sk-[A-Za-z0-9]{20,}",                         # OpenAI key style (old)
+            r"ghp_[A-Za-z0-9]{30,}",                        # GitHub PAT
+            r"AIza[0-9A-Za-z\-_]{35}",                      # Google API key
+            r"(?i)aws(.{0,20})?(access|secret)(.{0,20})?key(.{0,20})?[:=]\s*['\"][^'\"\n]+['\"]",
+            r"(?i)(password|passwd|pwd|secret|token|api_key)\s*[:=]\s*['\"][^'\"\n]+['\"]",
+          ]
+          for pat in patterns:
+            s = re.sub(pat, "[REDACTED]", s)
+
+          Path("pr_redacted.diff").write_text(s, encoding="utf-8")
+          print("Wrote pr_redacted.diff")
+          PY
+
+      - name: Build prompt
+        if: steps.pr.outputs.no_pr != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          diff = Path("pr_redacted.diff").read_text(encoding="utf-8", errors="replace")
+
+          prompt = f"""You are a senior software engineer doing a PR review.
+
+Goals:
+- Catch bugs, security issues, logic errors, missing edge cases.
+- Suggest improvements (clarity, maintainability, testing).
+- Keep it actionable. Use bullet points and short code snippets if needed.
+- If you are unsure, say so.
+
+Output format (Markdown):
+## Summary
+## High-risk issues
+## Suggestions
+## Tests to add
+
+Here is the PR diff:
+```diff
+{diff}
+```"""
+
+          Path("prompt.txt").write_text(prompt, encoding="utf-8")
+          print("Wrote prompt.txt")
+          PY
+
+      - name: Call OpenAI (Responses API)
+        if: steps.pr.outputs.no_pr != 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, urllib.request
+          from pathlib import Path
+
+          api_key = os.environ.get("OPENAI_API_KEY")
+          if not api_key:
+            raise SystemExit("Missing OPENAI_API_KEY secret.")
+
+          prompt = Path("prompt.txt").read_text(encoding="utf-8", errors="replace")
+
+          payload = {
+            "model": "gpt-4.1-mini",
+            "input": [
+              {"role": "system", "content": "You are a careful code reviewer."},
+              {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.2
+          }
+
+          req = urllib.request.Request(
+            "https://api.openai.com/v1/responses",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+              "Authorization": f"Bearer {api_key}",
+              "Content-Type": "application/json",
+            },
+            method="POST",
+          )
+
+          with urllib.request.urlopen(req, timeout=180) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+
+          # 取出文字輸出（兼容 Responses 的 output 結構）
+          out = []
+          for item in data.get("output", []):
+            if item.get("type") == "message":
+              for c in item.get("content", []):
+                if c.get("type") == "output_text":
+                  out.append(c.get("text", ""))
+
+          text = "\n".join(out).strip() or "AI returned no text output."
+          Path("review.md").write_text(text + "\n", encoding="utf-8")
+          print("Wrote review.md")
+          PY
+
+           - name: Post PR comment
+        if: ${{ steps.pr.outputs.no_pr != 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 避免太長留言失敗（GitHub comment 上限 ~65k）
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("review.md")
+          s = p.read_text(encoding="utf-8", errors="replace")
+
+          cap = 60000
+          if len(s) > cap:
+              s = s[:cap] + "\n\n---\n[TRUNCATED: review was too long]\n"
+
+          p.write_text(s, encoding="utf-8")
+          PY
+
+          gh pr comment "$PR_NUMBER" --body-file review.md
+          echo "✅ Comment posted to PR #$PR_NUMBER"
+

@@ -1,0 +1,25 @@
+      - name: Post PR comment
+        if: ${{ steps.pr.outputs.no_pr != 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 避免太長留言失敗（GitHub comment 上限 ~65k）
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("review.md")
+          s = p.read_text(encoding="utf-8", errors="replace")
+
+          cap = 60000
+          if len(s) > cap:
+              s = s[:cap] + "\n\n---\n[TRUNCATED: review was too long]\n"
+
+          p.write_text(s, encoding="utf-8")
+          PY
+
+          gh pr comment "$PR_NUMBER" --body-file review.md
+          echo "✅ Comment posted to PR #$PR_NUMBER"
