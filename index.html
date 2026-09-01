@@ -1,212 +1,329 @@
-<!doctype html>
-<html lang="zh-Hant-TW">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Triple Clouds(TEST)｜價格與方案</title>
-  <meta name="description" content="年費制＋超額計量的透明計費，內含一鍵復原與一鍵 Snapshot，另有高價設施提醒與保護條款。" />
-  <style>
-    :root{
-      --bg:#0b0f14; --card:#111826; --muted:#94a3b8; --text:#e2e8f0; --brand:#7dd3fc; --brand-2:#22d3ee; --danger:#ef4444; --ok:#10b981; --border:#1f2937;
-    }
-    @media (prefers-color-scheme: light){
-      :root{ --bg:#f8fafc; --card:#ffffff; --muted:#64748b; --text:#0f172a; --brand:#0284c7; --brand-2:#06b6d4; --danger:#dc2626; --ok:#059669; --border:#e2e8f0; }
-      body{background:var(--bg);} 
-    }
-    *{box-sizing:border-box}
-    body{ margin:0; font-family:ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color:var(--text); background:var(--bg);}
-    .wrap{ max-width:1100px; margin:0 auto; padding:24px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三云有限公司 | 告別公有雲天價帳單！專為中小企業打造的「零信任」一鍵自動備份</title>
+    <meta name="description" content="專為 50 人以下企業打造：端點加密 + 多雲碎化防禦的一鍵自動備份，固定月費透明，絕不爆單。">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --primary-blue: #00d2ff;
+            --accent-blue: #0072ff;
+            --text-color: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-color: #30363d;
+        }
 
-    header{ display:flex; gap:16px; align-items:center; justify-content:space-between; margin-bottom:20px; }
-    .brand{ font-weight:800; letter-spacing:.2px; }
-    .pill{ padding:6px 10px; border:1px solid var(--border); border-radius:999px; color:var(--muted); font-size:12px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
 
-    .hero{ background:linear-gradient(135deg, rgba(34,211,238,.08), rgba(125,211,252,.06)); border:1px solid var(--border); border-radius:16px; padding:22px; margin-bottom:24px; }
-    .hero h1{ margin:0 0 6px; font-size:28px; }
-    .hero p{ margin:0 0 14px; color:var(--muted); }
-    .cta{ display:flex; gap:10px; flex-wrap:wrap; }
-    .btn{ appearance:none; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }
-    .btn-primary{ background:linear-gradient(90deg,var(--brand),var(--brand-2)); color:#00131a; }
-    .btn-outline{ background:transparent; border:1px solid var(--border); color:var(--text); }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-    .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-    @media (max-width:900px){ .grid{ grid-template-columns:1fr; } }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:10px; }
-    .card h3{ margin:0; font-size:18px; }
-    .price{ font-size:28px; font-weight:800; }
-    .small{ color:var(--muted); font-size:13px; }
-    .features{ display:flex; flex-direction:column; gap:8px; margin:6px 0; }
-    .features li{ list-style:none; display:flex; gap:8px; align-items:flex-start; }
-    .features .dot{ width:8px; height:8px; border-radius:999px; background:var(--ok); margin-top:6px; }
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    .table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:14px; }
-    .table th, .table td{ text-align:left; padding:10px 8px; border-bottom:1px solid var(--border); }
-    .kbd{ font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background:rgba(148,163,184,.15); border:1px solid var(--border); padding:2px 6px; border-radius:6px; }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .notice{ display:flex; gap:10px; align-items:flex-start; border:1px solid var(--border); border-left:4px solid var(--danger); background:rgba(239,68,68,.1); padding:12px; border-radius:12px; }
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
 
-    footer{ color:var(--muted); font-size:12px; margin:26px 0 12px; }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    /* Modal */
-    dialog{ border:none; border-radius:16px; padding:0; width:min(560px, 92vw); background:var(--card); color:var(--text); }
-    .modal-hd{ padding:14px 16px; border-bottom:1px solid var(--border); font-weight:800; }
-    .modal-bd{ padding:16px; }
-    .modal-ft{ padding:12px 16px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid var(--border); }
-    dialog::backdrop{ background:rgba(0,0,0,.5); }
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
 
-  </style>
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: #fff;
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.4);
+        }
+
+        /* Comparison Section */
+        .comparison {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        th, td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #21262d;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary-blue);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Form Section */
+        .form-section {
+            padding: 80px 0;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin: 60px 0;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 1rem; }
+        }
+    </style>
 </head>
 <body>
-  <div class="wrap">
+
     <header>
-      <div class="brand">Triple Clouds</div>
-      <div class="pill">價格與方案（年費 + 超額計量）</div>
+        <div class="container">
+            <a href="#" class="logo">
+                🛡️ 三云有限公司 Triple-Clouds
+            </a>
+        </div>
     </header>
 
-    <section class="hero" aria-label="intro">
-      <h1>透明、彈性的計費方式，保障您的預算</h1>
-      <p>年費制 + 超額計量，搭配高價設施提醒與保護條款，讓您用得安心。</p>
-      <div class="cta">
-        <button class="btn btn-primary" data-action="demo">預約 Demo</button>
-        <button class="btn btn-outline" data-action="quote">索取報價</button>
-        <a class="btn btn-outline" href="#terms">下載條款（PDF）</a>
-      </div>
-    </section>
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>告別公有雲天價帳單！<br>專為中小企業打造的「零信任」一鍵自動備份</h1>
+            <p>不需專職 IT 人員、沒有隱藏流量費用。資料本地加密 + 多雲切片儲存，就算雲端業者遭駭，您的公司檔案也絕對安全。</p>
+            <a href="#apply" class="cta-btn">免費申請 14 天完整體驗</a>
+        </section>
 
-    <section aria-label="plans" class="grid">
-      <!-- Basic -->
-      <article class="card" data-plan="basic">
-        <h3>Basic</h3>
-        <div class="price">NT$ 50,000<span class="small">／年</span></div>
-        <ul class="features">
-          <li><span class="dot"></span><span>一鍵復原、快照、跨區備份</span></li>
-          <li><span class="dot"></span><span>LINE / Email 通知、基本報告</span></li>
-          <li><span class="dot"></span><span>每月 3 次技術支援</span></li>
-        </ul>
-        <table class="table" aria-label="overage">
-          <tr><th>超額項目</th><th>單價</th></tr>
-          <tr><td>備份存量</td><td>NT$ 0.50 / GB / 月</td></tr>
-          <tr><td>災難演練（額外）</td><td>NT$ 10,000 / 次</td></tr>
-        </table>
-        <button class="btn btn-primary" data-action="choose" data-tier="basic">選擇 Basic</button>
-      </article>
+        <!-- Comparison Table -->
+        <section class="comparison">
+            <h2 class="section-title">為什麼傳統備份方案總是讓您踩坑？</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>您面臨的常見痛點</th>
+                            <th>三云「零信任」一鍵備份方案</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>費用不可預測</strong>：AWS/Azure 計費複雜，常收到突發高額帳單。</td>
+                            <td class="highlight"><strong>固定月費透明</strong>：每月固定 NT$ 1,500 起，內建配額熔斷保護，絕不爆單。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>資安外洩風險</strong>：資料放在單一雲端，萬一帳號遭駭，檔案全被端走。</td>
+                            <td class="highlight"><strong>零知識多雲切片</strong>：本地加密後切碎分存，任何人包含雲端業者都無法取得完整檔案。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>還原流程複雜</strong>：發生災難時沒有 IT 人員，根本不知如何復原。</td>
+                            <td class="highlight"><strong>3 次點擊一鍵復原</strong>：非技術人員配合圖文/LINE 步驟，即可輕鬆觸發復原。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-      <!-- Pro -->
-      <article class="card" data-plan="pro">
-        <h3>Pro</h3>
-        <div class="price">NT$ 120,000<span class="small">／年</span></div>
-        <ul class="features">
-          <li><span class="dot"></span><span>含 Basic 全部 + 備份清理／成本優化</span></li>
-          <li><span class="dot"></span><span>監控儀表板</span></li>
-          <li><span class="dot"></span><span>每月 6 次技術支援</span></li>
-        </ul>
-        <table class="table" aria-label="overage">
-          <tr><th>超額項目</th><th>單價</th></tr>
-          <tr><td>備份存量</td><td>NT$ 0.50 / GB / 月</td></tr>
-          <tr><td>災難演練（額外）</td><td>NT$ 9,000 / 次</td></tr>
-        </table>
-        <button class="btn btn-primary" data-action="choose" data-tier="pro">選擇 Pro</button>
-      </article>
+        <!-- Features -->
+        <section class="features">
+            <h2 class="section-title">核心優勢與特色</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>🔒 零知識多雲碎化技術</h3>
+                    <p>檔案在您的電腦即完成 AES-256 加密與切片，分散存放於獨立雲端。即便單一雲端供應商遭攻擊，駭客僅能拿到無意義亂碼。</p>
+                </div>
+                <div class="card">
+                    <h3>💰 100% 財務可預測性</h3>
+                    <p>告別公有雲按量扣款的黑盒機制。我們提供明確的預算上限防護，讓您編列固定 IT 預算，營運不踩坑。</p>
+                </div>
+                <div class="card">
+                    <h3>🤝 陪伴式客服與預警</h3>
+                    <p>整合 LINE 自動化預警與白話文教學，提供主動式健康檢查與復原演練指導，讓您「不只備份成功，更能還原成功」。</p>
+                </div>
+            </div>
+        </section>
 
-      <!-- Enterprise -->
-      <article class="card" data-plan="enterprise">
-        <h3>Enterprise</h3>
-        <div class="price">客製<span class="small">／年</span></div>
-        <ul class="features">
-          <li><span class="dot"></span><span>含 Pro 全部 + 合規審計報告</span></li>
-          <li><span class="dot"></span><span>高安全金鑰管理（BYOK/KMS）</span></li>
-          <li><span class="dot"></span><span>專屬客服窗口</span></li>
-        </ul>
-        <table class="table" aria-label="overage">
-          <tr><th>超額項目</th><th>單價</th></tr>
-          <tr><td>依合約議價</td><td>—</td></tr>
-        </table>
-        <button class="btn btn-primary" data-action="choose" data-tier="enterprise">聯絡銷售</button>
-      </article>
-    </section>
+        <!-- Form Section -->
+        <section class="form-section" id="apply">
+            <div class="form-container">
+                <h2 class="section-title" style="margin-bottom: 10px;">【限量 20 組】搶先體驗體驗方案</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">留下您的聯絡資訊，即可獲得 14 天免費試用與 1 對 1 企業資安備份健檢。</p>
 
-    <section style="margin-top:24px;" aria-label="high-cost">
-      <div class="notice" role="alert">
-        <strong style="color:var(--danger)">高價設施提醒：</strong>
-        <div>GPU 執行個體、Provisioned IOPS、高頻演練、跨區資料傳輸等屬高成本項目，啟用前將彈出提示並需管理者二次確認。</div>
-      </div>
-    </section>
-
-    <section id="terms" style="margin-top:24px;" aria-label="terms">
-      <h2 style="margin:8px 0 6px">條款摘要</h2>
-      <ul class="small">
-        <li>所有價格為未稅；實際雲供應商費用另計。</li>
-        <li>年費含基本額度；超額依表列計費並按月結算。</li>
-        <li>合理使用政策（FUP）適用；詳見完整合約。</li>
-      </ul>
-    </section>
+                <!-- 表單串接 (替換 action 裡面的 URL 即可) -->
+                <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+                    <div class="form-group">
+                        <label for="name">姓名 / 稱呼 *</label>
+                        <input type="text" id="name" name="name" required placeholder="例如：王經理">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">公司名稱與人數 *</label>
+                        <input type="text" id="company" name="company" required placeholder="例如：三云科技 (15人)">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">聯絡電話 *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="例如：0912-345-678">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">電子郵件 Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="name@company.com">
+                    </div>
+                    <button type="submit" class="cta-btn" style="width: 100%;">立即提交申請</button>
+                </form>
+            </div>
+        </section>
+    </main>
 
     <footer>
-      © <span id="y"></span> Triple Clouds. All rights reserved.
+        <div class="container">
+            <p>&copy; 2026 三云有限公司 Triple-Clouds Co., Ltd. All rights reserved.</p>
+        </div>
     </footer>
-  </div>
 
-  <!-- Quote modal -->
-  <dialog id="quoteModal" aria-labelledby="quoteTitle">
-    <div class="modal-hd" id="quoteTitle">索取報價</div>
-    <form class="modal-bd" id="quoteForm">
-      <label class="small">您的公司 / 組織<br>
-        <input name="org" required style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text)" />
-      </label>
-      <br><br>
-      <label class="small">Email<br>
-        <input name="email" type="email" required style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text)" />
-      </label>
-      <br><br>
-      <label class="small">意向方案
-        <select name="plan" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--text)">
-          <option>Basic</option>
-          <option>Pro</option>
-          <option>Enterprise</option>
-        </select>
-      </label>
-    </form>
-    <div class="modal-ft">
-      <button class="btn btn-outline" data-close>取消</button>
-      <button class="btn btn-primary" form="quoteForm" type="submit">送出</button>
-    </div>
-  </dialog>
-
-  <script>
-    // Year
-    document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Quote modal
-    const modal = document.getElementById('quoteModal');
-    const openQuote = () => modal.showModal();
-    const closeQuote = () => modal.close();
-
-    document.querySelector('[data-action="quote"]').addEventListener('click', openQuote);
-    modal.querySelector('[data-close]').addEventListener('click', closeQuote);
-
-    // Choose plan buttons prefill quote
-    document.querySelectorAll('[data-action="choose"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        modal.showModal();
-        modal.querySelector('select[name="plan"]').value = btn.dataset.tier;
-      });
-    });
-
-    // Submit (placeholder: replace with your endpoint)
-    document.getElementById('quoteForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      console.log('quote', data); // TODO: POST to /api/quote
-      alert('已送出需求，我們將盡快與您聯絡！');
-      modal.close();
-    });
-
-    // Demo CTA (placeholder)
-    document.querySelector('[data-action="demo"]').addEventListener('click', () => {
-      // TODO: navigate to your booking page
-      window.location.href = '/contact';
-    });
-  </script>
 </body>
 </html>
