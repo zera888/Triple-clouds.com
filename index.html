@@ -1,345 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>三云有限公司 | 告別公有雲天價帳單！專為中小企業打造的「零信任」一鍵自動備份</title>
-    <meta name="description" content="專為 50 人以下企業打造：端點加密 + 多雲碎化防禦的一鍵自動備份，固定月費透明，絕不爆單。">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --primary-blue: #00d2ff;
-            --accent-blue: #0072ff;
-            --text-color: #f0f6fc;
-            --text-muted: #8b949e;
-            --border-color: #30363d;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triple-Clouds | 服務與試用申請</title>
+  <style>
+    /* 基礎頁面樣式與變數 */
+    :root {
+      --primary-color: #2563eb;
+      --bg-color: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Noto Sans TC', sans-serif;
-        }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+    header {
+      background-color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
 
-        /* Header */
-        header {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+    /* 區塊與響應式容器容器 */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .form-section {
+      background: #ffffff;
+      margin-top: 30px;
+      padding: 30px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
 
-        /* Hero Section */
-        .hero {
-            padding: 80px 0 60px;
-            text-align: center;
-        }
+    .section-title {
+      text-align: center;
+      margin-top: 0;
+      font-size: 1.75rem;
+    }
 
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .section-desc {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
 
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto 40px;
-        }
+    /* 確保 Google 表單在手機與電腦上皆置中且無邊框 */
+    .iframe-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+    }
 
-        .cta-btn {
-            display: inline-block;
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            color: #fff;
-            padding: 15px 35px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 114, 255, 0.4);
-        }
-
-        /* Comparison Section */
-        .comparison {
-            padding: 60px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 40px;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-        }
-
-        th, td {
-            padding: 18px 20px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        th {
-            background-color: #21262d;
-            font-size: 1.1rem;
-        }
-
-        .highlight {
-            color: var(--primary-blue);
-            font-weight: bold;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 60px 0;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            transition: border-color 0.3s;
-        }
-
-        .card:hover {
-            border-color: var(--primary-blue);
-        }
-
-        .card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            color: var(--primary-blue);
-        }
-
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* Form Section */
-        .form-section {
-            padding: 80px 0;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            margin: 60px 0;
-        }
-
-        .form-container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-size: 1rem;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            border-top: 1px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 1.8rem; }
-            .hero p { font-size: 1rem; }
-        }
-    </style>
+    .iframe-wrapper iframe {
+      width: 100%;
+      max-width: 640px;
+      height: 1100px;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <a href="#" class="logo">
-                🛡️ 三云有限公司 Triple-Clouds
-            </a>
-        </div>
-    </header>
+  <header>
+    <h1>Triple-Clouds</h1>
+  </header>
 
-    <main class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>告別公有雲天價帳單！<br>專為中小企業打造的「零信任」一鍵自動備份</h1>
-            <p>不需專職 IT 人員、沒有隱藏流量費用。資料本地加密 + 多雲切片儲存，就算雲端業者遭駭，您的公司檔案也絕對安全。</p>
-            <a href="#apply" class="cta-btn">免費申請 14 天完整體驗</a>
-        </section>
-
-        <!-- Comparison Table -->
-        <section class="comparison">
-            <h2 class="section-title">為什麼傳統備份方案總是讓您踩坑？</h2>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>您面臨的常見痛點</th>
-                            <th>三云「零信任」一鍵備份方案</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>費用不可預測</strong>：AWS/Azure 計費複雜，常收到突發高額帳單。</td>
-                            <td class="highlight"><strong>固定月費透明</strong>：每月固定 NT$ 1,500 起，內建配額熔斷保護，絕不爆單。</td>
-                        </tr>
-                        <tr>
-                            <td><strong>資安外洩風險</strong>：資料放在單一雲端，萬一帳號遭駭，檔案全被端走。</td>
-                            <td class="highlight"><strong>零知識多雲切片</strong>：本地加密後切碎分存，任何人包含雲端業者都無法取得完整檔案。</td>
-                        </tr>
-                        <tr>
-                            <td><strong>還原流程複雜</strong>：發生災難時沒有 IT 人員，根本不知如何復原。</td>
-                            <td class="highlight"><strong>3 次點擊一鍵復原</strong>：非技術人員配合圖文/LINE 步驟，即可輕鬆觸發復原。</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Features -->
-        <section class="features">
-            <h2 class="section-title">核心優勢與特色</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>🔒 零知識多雲碎化技術</h3>
-                    <p>檔案在您的電腦即完成 AES-256 加密與切片，分散存放於獨立雲端。即便單一雲端供應商遭攻擊，駭客僅能拿到無意義亂碼。</p>
-                </div>
-                <div class="card">
-                    <h3>💰 100% 財務可預測性</h3>
-                    <p>告別公有雲按量扣款的黑盒機制。我們提供明確的預算上限防護，讓您編列固定 IT 預算，營運不踩坑。</p>
-                </div>
-                <div class="card">
-                    <h3>🤝 陪伴式客服與預警</h3>
-                    <p>整合 LINE 自動化預警與白話文教學，提供主動式健康檢查與復原演練指導，讓您「不只備份成功，更能還原成功」。</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Form Section -->
-        <section class="form-section" id="apply">
-            <div class="form-container">
-                <h2 class="section-title" style="margin-bottom: 10px;">【限量 20 組】搶先體驗體驗方案</h2>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">留下您的聯絡資訊，即可獲得 14 天免費試用與 1 對 1 企業資安備份健檢。</p>
-
-                <!-- 表單串接 (替換 action 裡面的 URL 即可) -->
-                <form action="https://formspree.io/f/mbgjgoeg" method="POST">
-                    <div class="form-group">
-                        <label for="name">姓名 / 稱呼 *</label>
-                        <input type="text" id="name" name="name" required placeholder="例如：王經理">
-                    </div>
-                    <div class="form-group">
-                        <label for="company">公司名稱與人數 *</label>
-                        <input type="text" id="company" name="company" required placeholder="例如：三云科技 (15人)">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">聯絡電話 *</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="例如：0912-345-678">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">電子郵件 Email *</label>
-                        <input type="email" id="email" name="email" required placeholder="name@company.com">
-                    </div>
-                     <div class="form-group">
-                        <label for="Business Item">營業項目 *</label>
-                        <input type="text" id="Business Item" name="Business Item" required placeholder="例如:禮品業">
-                    </div>
-                     <div class="form-group">
-                        <label for="Product">主要產品*</label>
-                        <input type="text" id="Product" name="Product" required placeholder="例如:文具">
-                    </div>
-                     <div class="form-group">
-                        <label for="Capital">資本額(萬)*</label>
-                        <input type="text" id="Capital" name="Capital" required placeholder="金額(萬)">
-                    </div>
-                     <div class="form-group">
-                        <label for="main pourse">主要需求*</label>
-                        <input type="text" id="main pourpose" name="main pourpose" required placeholder="Trial/Quote">
-                    </div>
-                    <button type="submit" class="cta-btn" style="width: 100%;">立即提交申請</button>
-                </form>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <p>&copy; 2026 三云有限公司 Triple-Clouds Co., Ltd. All rights reserved.</p>
-        </div>
-    </footer>
+  <main class="container">
+    <!-- 需求調查表單區塊 -->
+    <section class="form-section" id="apply">
+      <h2 class="section-title">Landing Page 潛在客戶需求調查</h2>
+      <p class="section-desc">留下您的聯絡資訊，即可獲得 14 天免費試用與 1 對 1 企業專員設定諮詢。</p>
+      
+      <div class="iframe-wrapper">
+        <iframe 
+          src="https://docs.google.com/forms/d/e/1FAIpQLSesCVtMsrKXGjE_P_qNBm2B_j3h40ctMGhzWc5PI1HvIuiH4g/viewform?embedded=true" 
+          marginheight="0" 
+          marginwidth="0">載入中…</iframe>
+      </div>
+    </section>
+  </main>
 
 </body>
 </html>
